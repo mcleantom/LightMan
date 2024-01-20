@@ -1,3 +1,5 @@
+from typing import List
+
 import matplotlib.pyplot as plt
 
 from light_man import Point, Room
@@ -5,7 +7,7 @@ from light_man import Point, Room
 __all__ = ["plot_room"]
 
 
-def plot_room(room: Room, lights: list[Point]):
+def plot_room(room: Room, lights: List[Point]):
     fig, ax = plt.subplots()
     width = room.geometry.width
     height = room.geometry.height
