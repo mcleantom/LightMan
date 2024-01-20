@@ -1,43 +1,35 @@
 import matplotlib.pyplot as plt
 
-from light_man import EOrientation, Room
+from light_man import Point, Room
 
 __all__ = ["plot_room"]
 
 
-def plot_room(room: Room):
+def plot_room(room: Room, lights: list[Point]):
     fig, ax = plt.subplots()
-
-    ax.plot([0, room.width, room.width, 0, 0], [0, 0, room.height, room.height, 0], color="black")
+    width = room.dimensions.width
+    height = room.dimensions.height
+    ax.plot([0, width, width, 0, 0], [0, 0, height, height, 0], color="black")
 
     for beam in room.beams:
-        if beam.orientation == EOrientation.HORIZONTAL:
-            rect = plt.Rectangle(
-                (beam.position.x, beam.position.y),
-                beam.width,
-                room.height,
-                linewidth=1,
-                edgecolor="r",
-                facecolor="none",
-                linestyle="dashed",
-                label=f"Beam {beam.orientation.name} at ({beam.position.x}, {beam.position.y})",
-            )
-        else:
-            rect = plt.Rectangle(
-                (beam.position.x, beam.position.y - beam.width),
-                room.width,
-                beam.width,
-                linewidth=1,
-                edgecolor="r",
-                facecolor="none",
-                linestyle="dashed",
-                label=f"Beam {beam.orientation.name} at ({beam.position.x}, {beam.position.y})",
-            )
-
+        rect = plt.Rectangle(
+            (beam.dimensions.p1.x, beam.dimensions.p1.y),
+            beam.dimensions.p2.x - beam.dimensions.p1.x,
+            beam.dimensions.p2.y - beam.dimensions.p1.y,
+            linewidth=1,
+            edgecolor="r",
+            facecolor="none",
+            linestyle="dashed",
+            label=f"Beam {beam.dimensions.p1.x, beam.dimensions.p1.y} to {beam.dimensions.p2.x, beam.dimensions.p2.y}",
+        )
         ax.add_patch(rect)
 
-    ax.set_xlim(0, room.width)
-    ax.set_ylim(0, room.height)
+    light_xs = [light.x for light in lights]
+    light_ys = [light.y for light in lights]
+    ax.scatter(light_xs, light_ys, color="blue", label="Lights")
+
+    ax.set_xlim(0, width)
+    ax.set_ylim(0, height)
     ax.set_aspect("equal", "box")
     ax.set_xlabel("X-axis")
     ax.set_ylabel("Y-axis")
