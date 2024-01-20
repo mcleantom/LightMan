@@ -1,3 +1,6 @@
+from typing import List
+
+import shapely
 from pydantic import BaseModel
 
 __all__ = ["Point", "Beam", "Room", "Rectangle"]
@@ -6,6 +9,9 @@ __all__ = ["Point", "Beam", "Room", "Rectangle"]
 class Point(BaseModel):
     x: float
     y: float
+
+    def to_shapely(self):
+        return shapely.geometry.Point(self.x, self.y)
 
 
 class Rectangle(BaseModel):
@@ -20,11 +26,19 @@ class Rectangle(BaseModel):
     def height(self):
         return abs(self.p1.y - self.p2.y)
 
+    def to_shapely(self):
+        return shapely.geometry.box(
+            self.p1.x,
+            self.p1.y,
+            self.p2.x,
+            self.p2.y,
+        )
+
 
 class Beam(BaseModel):
-    dimensions: Rectangle
+    geometry: Rectangle
 
 
 class Room(BaseModel):
-    dimensions: Rectangle
-    beams: list[Beam]
+    geometry: Rectangle
+    beams: List[Beam]

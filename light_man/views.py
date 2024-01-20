@@ -7,20 +7,20 @@ __all__ = ["plot_room"]
 
 def plot_room(room: Room, lights: list[Point]):
     fig, ax = plt.subplots()
-    width = room.dimensions.width
-    height = room.dimensions.height
+    width = room.geometry.width
+    height = room.geometry.height
     ax.plot([0, width, width, 0, 0], [0, 0, height, height, 0], color="black")
 
     for beam in room.beams:
         rect = plt.Rectangle(
-            (beam.dimensions.p1.x, beam.dimensions.p1.y),
-            beam.dimensions.p2.x - beam.dimensions.p1.x,
-            beam.dimensions.p2.y - beam.dimensions.p1.y,
+            (beam.geometry.p1.x, beam.geometry.p1.y),
+            beam.geometry.p2.x - beam.geometry.p1.x,
+            beam.geometry.p2.y - beam.geometry.p1.y,
             linewidth=1,
             edgecolor="r",
             facecolor="none",
             linestyle="dashed",
-            label=f"Beam {beam.dimensions.p1.x, beam.dimensions.p1.y} to {beam.dimensions.p2.x, beam.dimensions.p2.y}",
+            label=f"Beam {beam.geometry.p1.x, beam.geometry.p1.y} to {beam.geometry.p2.x, beam.geometry.p2.y}",
         )
         ax.add_patch(rect)
 
