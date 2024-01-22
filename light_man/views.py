@@ -1,10 +1,4 @@
-import matplotlib.pyplot as plt
-
-from typing import List
-
-from light_man import Room
-
-__all__ = ["plot_room"]
+# __all__ = ["plot_room"]
 
 
 # def plot_room(room: Room, lights: List[Point]):
