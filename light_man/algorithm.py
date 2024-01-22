@@ -1,6 +1,7 @@
 import shapely
 
 from light_man import Point, Room
+import collections
 
 __all__ = ["find_optimal_positions_of_lights"]
 
@@ -24,22 +25,46 @@ def convert_room_to_shapely_objects(room: Room):
     return room_shapely, beams_shapely
 
 
-def find_optimal_positions_of_lights(room: Room, n_lights: int) -> list[Point]:
+def find_optimal_positions_of_lights(room: Room, n_rows: int, n_cols : int) -> list[Point]:
     room_geom, beam_geoms = convert_room_to_shapely_objects(room)
     light_geoms = []
+    bad_lights = []
 
-    for i in range(n_lights):
-        x = room.dimensions.p1.x + (i + 0.5) * room.dimensions.width / n_lights
-        y = room.dimensions.p1.y + (i + 0.5) * room.dimensions.height / n_lights
-        light_geoms.append(shapely.geometry.Point(x, y))
+    for i in range(n_rows):
+        for j in range(n_cols):
+            x = room.dimensions.p1.x + (i + 0.5)* room.dimensions.width / n_rows
+            y = room.dimensions.p1.y + (j+ 0.5) * room.dimensions.height / n_cols
+            light_geoms.append(Point(x = x, y = y))
 
-    # plot the geometry
+    lights_hit_beams = False
+    for light in light_geoms:
+        good_light = True;
+        for beam in room.beams:
+            if is_c_within_ab(beam.dimensions.p1, beam.dimensions.p2, light):
+                bad_lights.append(light);
+                print("Lights overlap with beams")
+                break;
+                
+    result = collections.Counter(light_geoms) or collections.Counter(bad_lights)
+    good_lights = list(result.elements())   
+    print(str(light_geoms))
+    print(str(bad_lights))       
+    print(str(good_lights))         
+
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots()
     ax.plot(*room_geom.exterior.xy, color="black")
     for beam_geom in beam_geoms:
-        ax.plot(*beam_geom.exterior.xy, color="red")
-    x, y = [light.x for light in light_geoms], [light.y for light in light_geoms]
+        ax.plot(*beam_geom.exterior.xy, color="brown")
+    x, y = [light.x for light in good_lights], [light.y for light in good_lights]
     ax.scatter(x, y, color="blue")
+    x, y = [light.x for light in bad_lights], [light.y for light in bad_lights]
+    ax.scatter(x, y, color="red")
     plt.show()
+
+def is_c_within_ab(a: Point, d: Point, m: Point):
+    if m.x < min(a.x, d.x) or m.x > max(a.x, d.x) or m.y < min(a.y, d.y) or m.y > max(a.y, d.y):
+        return False
+    return True;
+

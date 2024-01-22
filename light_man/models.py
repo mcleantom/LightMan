@@ -1,11 +1,21 @@
 from pydantic import BaseModel
-
+from typing import List
+import numpy as np
 __all__ = ["Point", "Beam", "Room", "Rectangle"]
 
 
 class Point(BaseModel):
     x: float
     y: float
+
+    def __sub__(self, other):
+        return Point(x = self.x - other.x, y = self.y - other.y)
+    
+    def dot(self, other):
+        return np.dot([self.x, self.y], [other.x, other.y])
+    
+    def __hash__(self):
+        return hash(self.x)^hash(self.y)
 
 
 class Rectangle(BaseModel):
@@ -27,4 +37,4 @@ class Beam(BaseModel):
 
 class Room(BaseModel):
     dimensions: Rectangle
-    beams: list[Beam]
+    beams: List[Beam]
