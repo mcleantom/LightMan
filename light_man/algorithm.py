@@ -13,7 +13,6 @@ def find_optimal_positions_of_lights(room: Room, n_rows: int, n_cols : int) -> l
     bad_lights = []
 
     room_points = tuple(room.dimensions.exterior.coords)
-    print(room_points)
     for i in range(n_rows):
         for j in range(n_cols):
             x = (i + 0.5)* room_points[1][0] / n_rows
@@ -26,19 +25,20 @@ def find_optimal_positions_of_lights(room: Room, n_rows: int, n_cols : int) -> l
                 bad_lights.append(light);
                 print("Lights overlap with beams")
                 break;    
-          
-    result = collections.Counter(light_geoms) or collections.Counter(bad_lights)
-    good_lights = list(result.elements())   
+
+    good_lights = [light for light in light_geoms if light not in bad_lights] 
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots()
     ax.plot(*room.dimensions.exterior.xy, color="black")
     for beam_geom in room.beams:
         ax.plot(*beam_geom.exterior.xy, color="brown")
-    x, y = [light.x for light in good_lights], [light.y for light in good_lights]
-    ax.scatter(x, y, color="blue")
-    x, y = [light.x for light in bad_lights], [light.y for light in bad_lights]
-    ax.scatter(x, y, color="red")
+
+    for light in good_lights:
+        plt.plot(*light.buffer(1).exterior.xy, color="yellow", alpha=0.6)
+        plt.plot(*light.buffer(0.2).exterior.xy, color="blue")
+    for light in bad_lights:
+        plt.plot(*light.buffer(0.2).exterior.xy, color="red")
     plt.show()
 
 def is_c_within_ab(a: Point, d: Point, m: Point):

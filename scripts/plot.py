@@ -1,17 +1,16 @@
-from light_man import Beam, Point, Rectangle, Room, plot_room, find_optimal_positions_of_lights
+from light_man import Room, find_optimal_positions_of_lights
+import shapely
 
 
 def main():
     room = Room(
-        dimensions=Rectangle(p1=Point(x=0, y=0), p2=Point(x=20, y=15)),
+        dimensions=shapely.geometry.box(0, 0, 20, 15),
         beams=[
-            Beam(dimensions=Rectangle(p1=Point(x=4.5, y=0), p2=Point(x=6, y=5))),
-            Beam(dimensions=Rectangle(p1=Point(x=3, y=0), p2=Point(x=4, y=4))),
-            Beam(dimensions=Rectangle(p1=Point(x=0, y=2), p2=Point(x=10, y=3))),
-            
-            Beam(dimensions=Rectangle(p1=Point(x=0, y=12), p2=Point(x=20, y=14))),
-            
-            Beam(dimensions=Rectangle(p1=Point(x=8, y=6), p2=Point(x=12, y=8))),
+            shapely.geometry.box(4.5, 0, 6, 5),
+            shapely.geometry.box(3, 0, 4, 4),
+            shapely.geometry.box(0, 2, 10, 3),
+            shapely.geometry.box(0, 12, 20, 14),
+            shapely.geometry.box(8, 6, 12, 8)
         ],
     )
     lights = find_optimal_positions_of_lights(room, 3, 4); 
