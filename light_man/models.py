@@ -6,9 +6,6 @@ __all__ = ["Room"]
 
 
 class Room:
-    dimensions: shapely.geometry.box
-    beams: List[shapely.geometry.box]
-
-    def __init__(self, dimensions, beams):
+    def __init__(self, dimensions: shapely.geometry.box, beams: List[shapely.geometry.box]):
         self.dimensions = dimensions
         self.beams = beams
