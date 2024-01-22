@@ -5,6 +5,7 @@ from light_man.models import Room
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('TkAgg')
+import numpy as np
 
 __all__ = ["find_optimal_positions_of_lights"]
 
@@ -29,7 +30,25 @@ def find_optimal_positions_of_lights(room: Room, n_rows: int, n_cols: int) -> li
 
     good_lights = [light for light in light_geoms if light not in bad_lights]
 
+    # Create the distance field
+    x = np.linspace(room.dimensions.bounds[0], room.dimensions.bounds[2], 100)
+    y = np.linspace(room.dimensions.bounds[1], room.dimensions.bounds[3], 100)
+    x, y = np.meshgrid(x, y)
+
+    illuminance_factor = 1
+    min_distance = 0.1
+    illuminance_field = np.zeros_like(x)
+    for light in good_lights:
+        x_distance = light.x - x
+        y_distance = light.y - y
+        distance = np.sqrt(x_distance ** 2 + y_distance ** 2)
+        distance = np.maximum(distance, min_distance)
+        illuminance = illuminance_factor / (distance ** 2)
+        illuminance_field += illuminance
+
     fig, ax = plt.subplots()
+    ax.contourf(x, y, np.log10(illuminance_field), cmap="viridis")
+
     ax.plot(*room.dimensions.exterior.xy, color="black")
     for beam_geom in room.beams:
         ax.plot(*beam_geom.exterior.xy, color="brown")
