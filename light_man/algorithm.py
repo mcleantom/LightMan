@@ -34,11 +34,9 @@ def find_optimal_positions_of_lights(room: Room, n_rows: int, n_cols : int) -> l
         for j in range(n_cols):
             x = room.dimensions.p1.x + (i + 0.5)* room.dimensions.width / n_rows
             y = room.dimensions.p1.y + (j+ 0.5) * room.dimensions.height / n_cols
-            light_geoms.append(Point(x = x, y = y))
+            light_geoms.append(shapely.Point(x, y))
 
-    lights_hit_beams = False
     for light in light_geoms:
-        good_light = True;
         for beam in room.beams:
             if is_c_within_ab(beam.dimensions.p1, beam.dimensions.p2, light):
                 bad_lights.append(light);
@@ -47,10 +45,6 @@ def find_optimal_positions_of_lights(room: Room, n_rows: int, n_cols : int) -> l
                 
     result = collections.Counter(light_geoms) or collections.Counter(bad_lights)
     good_lights = list(result.elements())   
-    print(str(light_geoms))
-    print(str(bad_lights))       
-    print(str(good_lights))         
-
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots()
